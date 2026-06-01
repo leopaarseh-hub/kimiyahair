@@ -75,6 +75,7 @@ const BOOKING_I18N = {
 
 // ─── CSS ───────────────────────────────────────────────────────────────────────
 const css = `
+html,body{overflow-x:hidden;}
 @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Inter:wght@300;400;500;600;700&family=Vazirmatn:wght@300;400;500;600;700&display=swap');
 @keyframes kbBounce{0%,100%{transform:translateY(0)}50%{transform:translateY(6px)}}
 @keyframes kbPulse{0%{transform:scale(1);opacity:.5}100%{transform:scale(1.6);opacity:0}}
@@ -147,17 +148,17 @@ const css = `
 .kb-wa-ico:hover{background:#d4b46a}
 
 /* ── DRAWER position:absolute inside .kb ── */
-.kb-overlay{position:absolute;inset:0;background:rgba(0,0,0,.65);z-index:200;opacity:0;pointer-events:none;transition:opacity .35s ease}
+.kb-overlay{position:fixed;inset:0;background:rgba(0,0,0,.65);z-index:200;opacity:0;pointer-events:none;transition:opacity .35s ease}
 .kb-overlay.on{opacity:1;pointer-events:all}
-.kb-drawer{position:absolute;top:0;right:0;height:100%;width:300px;background:${INK};z-index:201;
+.kb-drawer{position:fixed;top:0;right:0;height:100dvh;max-height:100dvh;width:300px;background:${INK};z-index:201;
   transform:translateX(100%);transition:transform .35s cubic-bezier(.4,0,.2,1);
   border-left:1px solid rgba(255,255,255,.08);display:flex;flex-direction:column}
 .kb-drawer.on{transform:translateX(0)}
 .kb-dhead{display:flex;align-items:center;justify-content:space-between;padding:20px 24px;border-bottom:1px solid rgba(255,255,255,.06);flex-shrink:0}
-.kb-dbody{padding:8px 16px;flex:1;overflow-y:auto}
+.kb-dbody{padding:8px 16px;flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch}
 .kb-dlink{display:block;width:100%;font-size:14px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.5);padding:14px 8px;border-bottom:1px solid rgba(255,255,255,.05);cursor:pointer;transition:color .2s;background:none;border-top:none;border-left:none;border-right:none;font-family:inherit;text-align:left}
 .kb-dlink:hover,.kb-dlink.gold{color:${G}}
-.kb-dfooter{padding:20px 24px;border-top:1px solid rgba(255,255,255,.06);flex-shrink:0}
+.kb-dfooter{padding:20px 24px;padding-bottom:calc(env(safe-area-inset-bottom) + 24px);border-top:1px solid rgba(255,255,255,.06);flex-shrink:0}
 
 /* ── BOOKING MODAL position:absolute inside .kb ── */
 .kb-modal-bg{position:absolute;inset:0;background:rgba(0,0,0,.82);backdrop-filter:blur(4px);z-index:300;opacity:0;pointer-events:none;transition:opacity .25s ease}
@@ -295,9 +296,11 @@ const css = `
 .kb-ft-cp{font-size:11px;color:rgba(255,255,255,.35)}.kb-ft-cp:hover{color:#C9A84C;transition:color .2s}
 
 /* ── FAB position:absolute inside .kb ── */
-.kb-fab{position:absolute;bottom:28px;right:28px;z-index:202;width:52px;height:52px;border-radius:50%;background:#25D366;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 20px rgba(37,211,102,.35);cursor:pointer;border:none;transition:transform .2s}
+.kb-fab{position:fixed;bottom:calc(env(safe-area-inset-bottom) + 180px);right:24px;z-index:202;width:52px;height:52px;border-radius:50%;background:#25D366;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 20px rgba(37,211,102,.35);cursor:pointer;border:none;transition:transform .2s}
 .kb-fab:hover{transform:scale(1.08)}
+.kb-menu-open .kb-fab{opacity:0;pointer-events:none;visibility:hidden}
 .kb-fab-p{position:absolute;inset:-4px;border-radius:50%;border:1px solid rgba(37,211,102,.45);animation:kbPulse 2.5s ease-out infinite}
+.kb-menu-open .kb-fab-p{animation:none}
 
 /* Responsive */
 
@@ -451,6 +454,34 @@ const css = `
 }
 @media(prefers-reduced-motion:reduce){.kb-cookie-bar{animation:none}}
 
+
+/* ── Mobile lang switcher in navbar ── */
+.kb-mob-lang-wrap{display:none;position:relative}
+@media(max-width:1024px){.kb-mob-lang-wrap{display:block}}
+.kb-mob-lang-btn{background:none;border:1px solid rgba(255,255,255,.18);
+  border-radius:8px;padding:6px 10px;color:rgba(255,255,255,.7);
+  font-family:inherit;font-size:10px;font-weight:700;letter-spacing:.12em;
+  cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:5px}
+.kb-mob-lang-btn:hover,.kb-mob-lang-btn.active{border-color:#C9A84C;color:#C9A84C}
+.kb-mob-lang-drop{position:absolute;top:calc(100% + 8px);right:0;
+  background:rgba(10,10,10,.97);border:1px solid rgba(201,168,76,.25);
+  border-radius:10px;overflow:hidden;min-width:140px;
+  box-shadow:0 12px 40px rgba(0,0,0,.6);
+  opacity:0;pointer-events:none;transform:translateY(-6px) scale(.97);
+  transition:all .2s cubic-bezier(.16,1,.3,1);z-index:999;backdrop-filter:blur(16px)}
+.kb-mob-lang-drop.on{opacity:1;pointer-events:all;transform:translateY(0) scale(1)}
+.kb-mob-lang-opt{display:flex;align-items:center;gap:10px;width:100%;
+  padding:11px 16px;background:none;border:none;cursor:pointer;
+  font-family:inherit;font-size:12px;font-weight:600;letter-spacing:.06em;
+  color:rgba(255,255,255,.5);transition:all .15s;text-align:left}
+.kb-mob-lang-opt:hover{background:rgba(255,255,255,.05);color:#fff}
+.kb-mob-lang-opt.active{color:#C9A84C}
+.kb-mob-lang-opt .flag{font-size:18px;line-height:1;flex-shrink:0}
+.kb-mob-lang-opt .lang-name{flex:1}
+.kb-mob-lang-opt .check{font-size:10px;color:#C9A84C;opacity:0}
+.kb-mob-lang-opt.active .check{opacity:1}
+.kb-mob-lang-divider{height:1px;background:rgba(255,255,255,.06);margin:0}
+
 @media(max-width:1024px){.kb-dnav{display:none}.kb-svc-g{grid-template-columns:repeat(2,1fr)}.kb-ft-g{grid-template-columns:1fr 1fr}}
 
 /* ── Language switcher buttons ── */
@@ -462,7 +493,8 @@ const css = `
 .kb.rtl .kb-drawer.on{transform:translateX(0)}
 .kb.rtl .kb-detail{right:auto;left:0;border-left:none;border-right:1px solid rgba(255,255,255,.08);transform:translateX(-100%)}
 .kb.rtl .kb-detail.on{transform:translateX(0)}
-.kb.rtl .kb-fab{right:auto;left:28px}
+.kb.rtl .kb-fab{right:auto;left:24px}
+.kb.rtl.kb-menu-open .kb-fab{opacity:0;pointer-events:none;visibility:hidden}
 .kb.rtl .kb-hdr-in{flex-direction:row-reverse}
 .kb.rtl .kb-dnav{flex-direction:row-reverse}
 .kb.rtl .kb-svc-acts{flex-direction:row-reverse}
@@ -582,6 +614,7 @@ export default function KimiyaHair() {
 
   const openLegal = (tab = "impressum") => { setLegalTab(tab); setLegalOpen(true); };
   const [langOpen,    setLangOpen]    = useState(false);
+  const [mobLangOpen, setMobLangOpen] = useState(false);
   // ── Cookie consent ─────────────────────────────────────────────────────────
   const [cookieVisible, setCookieVisible] = useState(false);
   const [galFilter,   setGalFilter]   = useState("all");
@@ -797,7 +830,7 @@ export default function KimiyaHair() {
 
 
   return (
-    <div className={`kb${locale==="fa"?" rtl":""}`} dir={locale==="fa"?"rtl":"ltr"}>
+    <div className={`kb${locale==="fa"?" rtl":""}${menuOpen?" kb-menu-open":""}`} dir={locale==="fa"?"rtl":"ltr"}>
       <style dangerouslySetInnerHTML={{ __html: css }} />
 
       {/* ── Drawer overlay ── */}
@@ -1370,6 +1403,32 @@ export default function KimiyaHair() {
                 <div className={`kb-lang-drop${langOpen?" on":""}`}>
                   {[{k:"de",l:"DE"},{k:"en",l:"EN"},{k:"fa",l:"FA"}].map(({k,l}) => (
                     <button key={k} className={`kb-lang-opt${locale===k?" active":""}`} onMouseDown={() => { setLocale(k); setLangOpen(false); }}>{l}</button>
+                  ))}
+                </div>
+              </div>
+              <div className="kb-mob-lang-wrap">
+                <button
+                  className={`kb-mob-lang-btn${mobLangOpen?" active":""}`}
+                  onClick={() => setMobLangOpen(o => !o)}
+                  onBlur={() => setTimeout(() => setMobLangOpen(false), 180)}>
+                  {locale==="de"?"🇩🇪":locale==="en"?"🇬🇧":"🇮🇷"} {locale.toUpperCase()}
+                </button>
+                <div className={`kb-mob-lang-drop${mobLangOpen?" on":""}`}>
+                  {[
+                    {k:"de", flag:"🇩🇪", name:"Deutsch"},
+                    {k:"en", flag:"🇬🇧", name:"English"},
+                    {k:"fa", flag:"🇮🇷", name:"فارسی"},
+                  ].map(({k, flag, name}, i, arr) => (
+                    <div key={k}>
+                      <button
+                        className={`kb-mob-lang-opt${locale===k?" active":""}`}
+                        onMouseDown={() => { setLocale(k); setMobLangOpen(false); }}>
+                        <span className="flag">{flag}</span>
+                        <span className="lang-name">{name}</span>
+                        <span className="check">✓</span>
+                      </button>
+                      {i < arr.length-1 && <div className="kb-mob-lang-divider"/>}
+                    </div>
                   ))}
                 </div>
               </div>
