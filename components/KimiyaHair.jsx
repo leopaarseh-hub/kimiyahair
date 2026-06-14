@@ -122,7 +122,10 @@ html,body{overflow-x:hidden;}
 .kb-div.c{margin:18px auto}
 
 /* Buttons */
-.kb-btn{display:inline-flex;align-items:center;gap:10px;font-family:inherit;font-size:11px;font-weight:600;letter-spacing:.18em;text-transform:uppercase;border:none;cursor:pointer;text-decoration:none;transition:all .3s ease;line-height:1}
+.kb-btn{display:inline-flex;align-items:center;justify-content:center;gap:10px;font-family:inherit;font-size:11px;font-weight:600;letter-spacing:.18em;text-transform:uppercase;border:none;cursor:pointer;text-decoration:none;transition:all .3s ease;line-height:1;white-space:nowrap}
+/* CTA button row: keep tidy, stack full-width on small screens (better fit for longer DE/FA labels) */
+.kb-cta-btns{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+@media(max-width:480px){.kb-cta-btns{flex-direction:column}.kb-cta-btns .kb-btn{width:100%}}
 .kb-gold{background:${G};color:${INK};padding:14px 28px;border-radius:12px}.kb-gold:hover{background:#d4b46a;transform:translateY(-1px)}
 .kb-out{background:transparent;color:#fff;border:1px solid rgba(255,255,255,.22);padding:14px 28px;border-radius:12px}.kb-out:hover{border-color:${G};color:${G}}
 .kb-out-d{background:transparent;color:${INK};border:1px solid rgba(0,0,0,.18);padding:14px 28px;border-radius:12px}.kb-out-d:hover{border-color:${G};color:${G}}
@@ -296,7 +299,7 @@ html,body{overflow-x:hidden;}
 .kb-ft-cp{font-size:11px;color:rgba(255,255,255,.35)}.kb-ft-cp:hover{color:#C9A84C;transition:color .2s}
 
 /* ── FAB position:absolute inside .kb ── */
-.kb-fab{position:fixed;bottom:calc(env(safe-area-inset-bottom) + 180px);right:24px;z-index:202;width:52px;height:52px;border-radius:50%;background:#25D366;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 20px rgba(37,211,102,.35);cursor:pointer;border:none;transition:transform .2s}
+.kb-fab{position:fixed;bottom:calc(env(safe-area-inset-bottom) + 100px);right:24px;z-index:202;width:52px;height:52px;border-radius:50%;background:#25D366;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 20px rgba(37,211,102,.35);cursor:pointer;border:none;transition:transform .2s}
 .kb-fab:hover{transform:scale(1.08)}
 .kb-menu-open .kb-fab{opacity:0;pointer-events:none;visibility:hidden}
 .kb-fab-p{position:absolute;inset:-4px;border-radius:50%;border:1px solid rgba(37,211,102,.45);animation:kbPulse 2.5s ease-out infinite}
@@ -1651,7 +1654,7 @@ export default function KimiyaHair() {
                   :locale==="en"?"Reach out via WhatsApp and take the first step toward your goals."
                   :"Schreiben Sie uns auf WhatsApp und machen Sie den ersten Schritt."}
               </p>
-              <div style={{ display:"flex", gap:12, justifyContent:"center", flexWrap:"wrap" }}>
+              <div className="kb-cta-btns">
                 <button onClick={() => openBooking()} className="kb-btn kb-out-ink">
                   <MessageCircle size={14}/> {locale==="fa"?"رزرو مشاوره":locale==="en"?"Book Consultation":"Beratung buchen"}
                 </button>
